@@ -90,7 +90,7 @@
 
     .splash-cta {
       position: absolute;
-      bottom: 36vh; /* Adjust this value if you need to nudge the button up/down inside the arch */
+      bottom: 36vh; /* Lowered from 25vh to pull button DOWN away from monogram text */
       left: 0;
       right: 0;
       display: flex;
@@ -100,20 +100,23 @@
       z-index: 3;
       animation: fadeUp 1.2s ease 0.8s both;
     }
+
+    /* ── SPLASH ENTER BUTTON (COMPACT SIZE) ── */
     .splash-enter {
       appearance: none;
       -webkit-appearance: none;
+      box-sizing: border-box;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 11px;
-      font-weight: 400;
-      line-height: 1; /* Strictly controls height across all browsers */
-      letter-spacing: 0.18em;
+      font-size: 10px; /* Slightly smaller, refined font size */
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: #2c2c2c;
       background: transparent;
-      border: 1px solid rgba(180, 140, 160, 0.5);
-      border-radius: 0; /* Prevents native Windows/Edge button rounding */
-      padding: 12px 32px;
+      border: 1px solid var(--sage-light);
+      border-radius: 0;
+      padding: 8px 24px; /* Reduced vertical & horizontal padding */
       cursor: pointer;
       transition: background 0.25s, color 0.25s;
       outline: none;
