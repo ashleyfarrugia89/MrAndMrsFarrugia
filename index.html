@@ -809,26 +809,47 @@
     }
 
     @media (max-width: 640px) {
-      nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 4px; }
+      /* ── NAV HORIZONTAL SCROLL FIX ── */
+      nav { 
+        justify-content: flex-start !important; 
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important; 
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px; 
+      }
+      nav::-webkit-scrollbar { display: none; }
+
+      /* ── LAYOUT RESETS ── */
       .form-row { grid-template-columns: 1fr; }
       .venue-grid { grid-template-columns: 1fr; }
       .accom-card { flex-direction: column; gap: 12px; }
       section { padding: 72px 20px; }
       .attire-box { padding: 28px 20px; }
       
+      /* ── SPLASH CTA ── */
       .splash-cta {
         bottom: 18dvh !important;
       }
       
+      /* ── HERO & CONTRAST FIX ── */
       #hero {
-        height: 75dvh !important; /* Reduces container height slightly so the photo isn't over-zoomed on tall screens */
+        height: 75dvh !important;
+        min-height: 75dvh !important; /* Overrides desktop min-height */
+      }
+
+      .hero-overlay {
+        top: auto !important;
+        bottom: 0 !important;
+        height: 65% !important;
+        background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.3) 60%, transparent 100%) !important;
       }
 
       #hero .hero-bg-img {
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
-        object-position: center 65% !important; /* Matches desktop focal point */
+        object-position: center 65% !important;
         display: block !important;
       }
 
@@ -853,6 +874,8 @@
       .countdown-label {
         font-size: 9px !important;
       }
+
+      /* ── TIMELINE FLUSH FIT FIX ── */
       .ootd-wrap::before {
         left: 20px !important;
         transform: none !important;
@@ -873,9 +896,11 @@
       .ootd-item.right::before {
         left: 20px !important;
         right: auto !important;
-        width: 22px !important;
+        width: 32px !important; /* Closes gap to icon */
         top: 22px !important;
       }
+
+      /* ── WEDDING PARTY 2-COLUMN GRID ── */
       .party-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 16px !important;
