@@ -910,13 +910,33 @@
       .accom-card { flex-direction: column; gap: 12px; }
       section { padding: 72px 20px; }
       .attire-box { padding: 28px 20px; }
+      .splash-cta {
+        /* Uses dynamic viewport height (dvh) so mobile address bars don't displace it */
+        bottom: 18dvh !important; 
+        left: 0 !important;
+        right: 0 !important;
+      }
+      .hero-content {
+        top: 45% !important; /* Slightly lowers content so it sits perfectly in sky space */
+        width: 95% !important;
+      }
+      .countdown {
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      .countdown-num {
+        font-size: 22px !important;
+      }
+      .countdown-label {
+        font-size: 9px !important;
+      }
       .ootd-wrap::before {
-        left: 16px;
-        transform: none;
+        left: 20px !important;
+        transform: none !important;
       }
       .ootd-diamond.top,
       .ootd-diamond.bot {
-        left: 16px;
+        left: 20px !important;
       }
       .ootd-item,
       .ootd-item.left,
@@ -926,18 +946,28 @@
         align-self: flex-start !important;
         text-align: left !important;
       }
-      .ootd-item.left::after,
-      .ootd-item.right::after {
-        left: -39.5px !important;
-        right: auto !important;
-        top: 19px !important;
-      }
+      /* Connects the vertical line (at 20px) to the icon container on the right */
       .ootd-item.left::before,
       .ootd-item.right::before {
-        left: -36px !important;
+        left: 20px !important;
         right: auto !important;
-        width: 36px !important;
+        width: 22px !important;
         top: 22px !important;
+      }
+      .party-grid {
+        grid-template-columns: repeat(2, 1fr) !important; /* Displays 2 per row */
+        gap: 16px !important;
+      }
+      .party-card {
+        padding: 18px 10px !important;
+      }
+      .party-initial {
+        width: 70px !important;
+        height: 70px !important;
+        font-size: 18px !important;
+      }
+      .party-name {
+        font-size: 14px !important;
       }
     }
     #decline-message-group {
@@ -1436,15 +1466,10 @@
   });
 
   // ── 3. SPLASH DOOR ANIMATION (FIXES JUMP TO VENUE) ──
+  // ── SPLASH DOOR ANIMATION (FIXED MOBILE SHIFT) ──
   function openDoors() {
-    // A. Unlock body scroll FIRST
-    document.body.classList.add('unlocked');
-    
-    // B. Force viewport to top of page immediately
+    // 1. Force screen to top immediately WITHOUT unlocking body scroll yet
     window.scrollTo(0, 0);
-
-    // C. Recalculate header height now that layout is active
-    syncHeaderHeight();
 
     const full  = document.getElementById('splash-full');
     const left  = document.getElementById('door-left');
@@ -1461,10 +1486,12 @@
       right.classList.add('sliding');
     }));
 
+    // 2. ONLY unlock body scroll after doors finish sliding open (1500ms)
     setTimeout(() => {
+      document.body.classList.add('unlocked');
       document.getElementById('splash').classList.add('done');
       site.forEach(el => el.style.opacity = '1');
-      // Final guard to ensure page stays at top (#hero)
+      syncHeaderHeight();
       window.scrollTo(0, 0);
     }, 1500);
   }
