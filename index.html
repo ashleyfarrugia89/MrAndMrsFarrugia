@@ -819,25 +819,26 @@
       .splash-cta {
         bottom: 18dvh !important;
       }
-      .hero,
-      .hero-section {
-        background-size: cover !important;
-        background-position: center 25% !important;
+      
+      #hero {
+        height: 75dvh !important; /* Reduces container height slightly so the photo isn't over-zoomed on tall screens */
       }
 
-      .hero img,
-      .hero-img {
+      #hero .hero-bg-img {
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
-        object-position: center 25% !important;
+        object-position: center 65% !important; /* Matches desktop focal point */
+        display: block !important;
       }
+
       .hero-content {
         top: 70% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         width: 92% !important;
       }
+
       .hero-title {
         font-size: 34px !important;
         margin-bottom: 10px !important;
