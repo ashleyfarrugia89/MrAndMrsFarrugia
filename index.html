@@ -632,16 +632,27 @@
       color: var(--sage);
     }
 
-    /* ── ACCOMMODATION ── */
-    .accom-grid { display: grid; gap: 20px; margin-top: 16px; }
+    /* ── ACCOMMODATION CARDS ── */
+    .accom-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 40px;
+      width: 100%;
+    }
+
     .accom-card {
       background: var(--warm-white);
       border: 1px solid var(--border);
-      padding: 28px 32px;
+      padding: 32px;
       display: flex;
-      gap: 24px;
+      flex-direction: column;
       align-items: flex-start;
+      gap: 16px;
+      width: 100%;
+      box-sizing: border-box;
     }
+
     .accom-badge {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 10px;
@@ -651,21 +662,66 @@
       background: var(--sage);
       padding: 4px 10px;
       white-space: nowrap;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-    .accom-content h4 { font-size: 18px; color: var(--charcoal); margin-bottom: 6px; }
-    .accom-content p { font-size: 15px; }
-    .accom-link {
       display: inline-block;
-      margin-top: 10px;
+    }
+
+    .accom-content {
+      width: 100%;
+    }
+
+    .accom-content h4 {
+      font-size: 20px;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+    }
+
+    .accom-content p {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── ALTERNATIVE ACCOMMODATION LIST GRID ── */
+    .accom-list-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 20px 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .accom-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .accom-item strong {
+      color: var(--charcoal);
+      font-size: 15px;
+    }
+
+    .accom-subtext {
+      color: var(--mid);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .accom-phone {
+      color: var(--sage);
+      text-decoration: none;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 3px;
+      transition: color 0.2s;
+    }
+
+    .accom-phone:hover {
       color: var(--accent);
-      text-decoration: none;
-      border-bottom: 1px solid var(--sage-light);
+      text-decoration: underline;
     }
 
     /* ── GIFTS ── */
@@ -881,7 +937,13 @@
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; }
       .venue-grid { grid-template-columns: 1fr; }
-      .accom-card { flex-direction: column; gap: 12px; }
+      .accom-card {
+        padding: 24px 20px;
+      }
+      .accom-list-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px 12px;
+      }
       section { padding: 72px 20px; }
       .attire-box { padding: 28px 20px; }
       
@@ -1236,30 +1298,103 @@
     <div class="section-divider"></div>
     <p>Whether you'd like to stay right at the castle or explore nearby options, there's something to suit every preference.</p>
     <div class="accom-grid" style="margin-top:40px;">
-      <div class="accom-card">
-        <span class="accom-badge">On-Site</span>
-        <div class="accom-content">
-          <h4>Peckforton Castle</h4>
-          <p>Stay in the castle itself and make the most of the full day's celebrations. Rooms are available to book directly with the venue — details and a booking link will be shared soon.</p>
-          <a href="https://www.peckfortoncastle.co.uk" target="_blank" rel="noopener" class="accom-link">Visit peckfortoncastle.co.uk →</a>
+
+  <!-- On-Site Castle -->
+  <div class="accom-card">
+    <span class="accom-badge">On-Site</span>
+    <div class="accom-content">
+      <h4>Peckforton Castle</h4>
+      <p>Stay right in the castle itself and enjoy the entire day on-site. Rooms can be reserved directly through the venue — booking details and group rates will be shared soon.</p>
+      <a href="https://www.peckfortoncastle.co.uk" target="_blank" rel="noopener" class="accom-link">Visit peckfortoncastle.co.uk →</a>
+    </div>
+  </div>
+
+  <!-- Consolidated Alternative Accommodation Card -->
+  <div class="accom-card">
+    <span class="accom-badge">Nearby Options</span>
+    <div class="accom-content">
+      <h4>Alternative Accommodation</h4>
+      <p>If you prefer to stay off-site, here is a selection of recommended local hotels, inns, and bed &amp; breakfasts nearby. We advise booking early as availability in the area fills up quickly.</p>
+      
+      <div class="accom-list-grid">
+
+        <div class="accom-item">
+          <strong>Swan Hotel</strong>
+          <span class="accom-subtext">Tarporley, CW6 0AG</span>
+          <a href="tel:01829733838" class="accom-phone">01829 733838</a>
         </div>
-      </div>
-      <div class="accom-card">
-        <span class="accom-badge">Nearby</span>
-        <div class="accom-content">
-          <h4>Local Alternatives</h4>
-          <p>There are several hotels, B&amp;Bs, and self-catering options in the surrounding area including Tarporley, Beeston, and Bunbury. We recommend booking early as availability can be limited.</p>
-          <a href="https://www.booking.com/searchresults.html?ss=Tarporley%2C+Cheshire" target="_blank" rel="noopener" class="accom-link">Search nearby on Booking.com →</a>
+
+        <div class="accom-item">
+          <strong>The Pheasant Inn</strong>
+          <span class="accom-subtext">Burwardsley, Nr. Tattenhall, CH3 9PF</span>
+          <a href="tel:01829770434" class="accom-phone">01829 770434</a>
         </div>
-      </div>
-      <div class="accom-card">
-        <span class="accom-badge">Note</span>
-        <div class="accom-content">
-          <h4>Planning Your Stay</h4>
-          <p>If you're unsure where to stay or need a recommendation, don't hesitate to reach out — we're happy to help point you in the right direction.</p>
+
+        <div class="accom-item">
+          <strong>Nunsmere Hall</strong>
+          <span class="accom-subtext">Oakmere, Northwich, CW8 2ES</span>
+          <a href="tel:01606889100" class="accom-phone">01606 889100</a>
         </div>
+
+        <div class="accom-item">
+          <strong>Macdonald Portal Hotel</strong>
+          <span class="accom-subtext">Cobblers Cross Lane, Tarporley, CW6 0DJ</span>
+          <a href="tel:08448799082" class="accom-phone">0844 879 9082</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Macdonald Hill Valley Hotel</strong>
+          <span class="accom-subtext">Whitchurch, Shropshire, SY13 4JH</span>
+          <a href="tel:08448799049" class="accom-phone">0844 879 9049</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Manor Farm</strong>
+          <span class="accom-subtext">Bickerton, SY14 8AN</span>
+          <a href="tel:01829720261" class="accom-phone">01829 720261</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Newton Hall</strong>
+          <span class="accom-subtext">Newton Lane, Nr. Tattenhall, CH3 9AY</span>
+          <a href="tel:01829770153" class="accom-phone">01829 770153</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Cholmondeley Arms</strong>
+          <span class="accom-subtext">Cholmondeley, SY14 8HN</span>
+          <a href="tel:01829720300" class="accom-phone">01829 720300</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Crown Hotel</strong>
+          <span class="accom-subtext">Tarporley, CW6 0AT</span>
+          <a href="tel:01829732416" class="accom-phone">01829 732416</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>The Tollemache Arms</strong>
+          <span class="accom-subtext">Nr. Tarporley, CW6 9JE</span>
+          <a href="tel:01829261716" class="accom-phone">01829 261716</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Egerton Arms</strong>
+          <span class="accom-subtext">Broxton, CH3 9JW</span>
+          <a href="tel:01829782241" class="accom-phone">01829 782241</a>
+        </div>
+
+        <div class="accom-item">
+          <strong>Alvanley Arms</strong>
+          <span class="accom-subtext">Cotebrook, Nr. Tarporley, CW6 9DS</span>
+          <a href="tel:01829760200" class="accom-phone">01829 760200</a>
+        </div>
+
       </div>
     </div>
+  </div>
+
+</div>
   </div>
 </section>
 
@@ -1276,7 +1411,7 @@
         <p>Bank details to be confirmed — we'll update this page once we have them ready.</p>
       </div>
       <div class="gifts-box" style="margin-top:20px;">
-        <h4>In Memory of Kieran Farrugia</h4>
+        <h4>In Memory Ashley's brother Kieran Farrugia</h4>
         <p>As an alternative, we would warmly welcome donations to <strong>Maggie's</strong> — a charity providing free emotional, practical, and social support to people living with cancer, as well as their families and friends.</p>
         <a href="#" class="charity-link">JustGiving link coming soon →</a>
       </div>
@@ -1291,7 +1426,7 @@
     <h2 class="section-title">RSVP</h2>
     <div class="section-divider"></div>
     <div id="rsvp-form-container">
-      <p id="rsvp-intro">Please let us know whether you'll be joining us by <strong style="color:rgba(250,249,247,0.9);">1st February 2027</strong>. Fill in the form below for each member of your party.</p>
+      <p id="rsvp-intro">Please let us know whether you'll be joining us by <strong style="color:rgba(250,249,247,0.9);">1st February 2027</strong>. Fill in the form below for your party.</p>
       <form class="rsvp-form" id="rsvpForm" onsubmit="handleRsvp(event)">
         <div class="form-row">
           <div class="form-group">
@@ -1361,10 +1496,6 @@
         <div class="faq-answer"><div class="faq-answer-inner">Yes — Peckforton Castle has ample on-site parking which is free to use. If you're planning to drink on the day, please arrange a safe way home or stay overnight.</div></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-question" onclick="toggleFaq(this)">Are children welcome?<span class="faq-icon">+</span></button>
-        <div class="faq-answer"><div class="faq-answer-inner">We love your little ones, however we have chosen to make our wedding an adults-only celebration (with the exception of breastfeeding babies). We hope you'll treat the day as a well-earned excuse for a night off!</div></div>
-      </div>
-      <div class="faq-item">
         <button type="button" class="faq-question" onclick="toggleFaq(this)">Can I bring a plus one?<span class="faq-icon">+</span></button>
         <div class="faq-answer"><div class="faq-answer-inner">Due to capacity, we've kept our guest list intimate. Your invitation will make clear whether a plus one has been included. If you have questions, please reach out directly.</div></div>
       </div>
@@ -1375,10 +1506,6 @@
       <div class="faq-item">
         <button type="button" class="faq-question" onclick="toggleFaq(this)">What time should I arrive?<span class="faq-icon">+</span></button>
         <div class="faq-answer"><div class="faq-answer-inner">Doors open from 1:00 pm, with the ceremony beginning at 2:00 pm. Please aim to be seated by 1:50 pm so we can start on time.</div></div>
-      </div>
-      <div class="faq-item">
-        <button type="button" class="faq-question" onclick="toggleFaq(this)">Will there be transport between the venue and local hotels?<span class="faq-icon">+</span></button>
-        <div class="faq-answer"><div class="faq-answer-inner">We are looking into shuttle options for guests staying nearby — more information will follow closer to the date. Local taxis are also available; we recommend booking in advance for the late-night return.</div></div>
       </div>
       <div class="faq-item">
         <button type="button" class="faq-question" onclick="toggleFaq(this)">I have a dietary requirement — who should I tell?<span class="faq-icon">+</span></button>
