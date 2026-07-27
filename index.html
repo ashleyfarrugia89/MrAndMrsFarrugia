@@ -724,6 +724,97 @@
       text-decoration: underline;
     }
 
+    /* ── TRANSPORT ── */
+    .trans-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 40px;
+      width: 100%;
+    }
+
+    .trans-card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .trans-card h4 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 12px;
+    }
+
+    .trans-content {
+      width: 100%;
+    }
+
+    .trans-content h4 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 12px;
+    }
+
+    .trans-content p {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    .trans-list-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 20px 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .trans-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .trans-item strong {
+      color: var(--charcoal);
+      font-size: 15px;
+    }
+
+    .trans-subtext {
+      color: var(--mid);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .trans-phone {
+      color: var(--sage);
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      margin-top: 3px;
+      transition: color 0.2s;
+    }
+
+    .trans-phone:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+
     /* ── GIFTS ── */
     .gifts-box {
       border: 1px solid var(--border);
@@ -1095,6 +1186,7 @@
     <a href="#attire">Attire</a>
     <a href="#party">Wedding Party</a>
     <a href="#accommodation">Stay</a>
+    <a href="#transport">Transport</a>
     <a href="#gifts">Gifts</a>
     <a href="#rsvp">RSVP</a>
     <a href="#faq">Q&amp;A</a>
@@ -1398,6 +1490,58 @@
   </div>
 </section>
 
+<!-- Transport & Taxis -->
+<section id="transport">
+  <div class="section-inner">
+    <p class="section-eyebrow">Getting home</p>
+    <h2 class="section-title">Transport &amp; Taxis</h2>
+    <div class="section-divider"></div>
+    <p>We recommend booking taxis in advance, as availability may be limited.</p>
+
+    <div class="trans-grid">
+
+      <!-- Local Taxi List Card -->
+      <div class="trans-card">
+        <h4>Local services</h4>
+        <div class="trans-content">
+          <p> Feel free to book your transportation with either of the following local taxi companies.</p>
+          <div class="trans-list-grid">
+
+            <div class="trans-item">
+              <strong>Tarvin Taxis</strong>
+              <a href="tel:07890454207" class="trans-phone">07890 454 207</a>
+            </div>
+
+            <div class="trans-item">
+              <strong>Holt Cars</strong>
+              <a href="tel:01829238230" class="trans-phone">01829 238230</a>
+            </div>
+
+            <div class="trans-item">
+              <strong>Apollo Travel</strong>
+              <a href="tel:07922442256" class="trans-phone">07922 442256</a>
+            </div>
+
+            <div class="trans-item">
+              <strong>A1 Cars</strong>
+              <a href="tel:01270841814" class="trans-phone">01270 841814</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carriages & Cellar Bar Notice Card -->
+      <div class="trans-card">
+        <div class="trans-content">
+          <h4>Pickup times</h4>
+          <p><strong>Carriages:</strong> Midnight</p>
+          <p style="margin-top: 10px;"><strong>Cellar Bar:</strong> For guests staying at the castle, the cellar bar will remain open from 12.00am to 1.00am.</p>
+        </div>
+      </div>
+
+  </div>
+</section>
+
 <!-- Gifts -->
 <section id="gifts">
   <div class="section-inner">
@@ -1412,8 +1556,8 @@
       </div>
       <div class="gifts-box" style="margin-top:20px;">
         <h4>In Memory Ashley's brother Kieran Farrugia</h4>
-        <p>As an alternative, we would warmly welcome donations to <strong>Maggie's</strong> — a charity providing free emotional, practical, and social support to people living with cancer, as well as their families and friends.</p>
-        <a href="#" class="charity-link">JustGiving link coming soon →</a>
+        <p>Alternatively, we would also warmly welcome donations to Maggie’s, a UK-based charity providing free emotional, practical, and social support to people living with cancer, as well as their families and friends, in loving memory of Ashley’s brother, Kieran Farrugia.</p>
+        <p>Bank details to be confirmed — we'll update this page once we have them ready.</p>
       </div>
     </div>
   </div>
