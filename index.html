@@ -1561,7 +1561,7 @@
     <h2 class="section-title">Gifts</h2>
     <div class="section-divider"></div>
     <div class="gifts-content">
-      <p>Your presence at our wedding is the greatest gift we could ask for. However, should you wish to contribute, a donation towards our honeymoon would be greatly appreciated.</p>
+      <p>Your presence at our wedding is the greatest gift we could ask for. Howerver, should you wish to contribute, we would be incredibly grateful for a donation towards our honeymoon, or to a memorial fund honoring Ashley's brother, Kieran.</p>
       <div class="gifts-box">
         <h4>Honeymoon Fund</h4>
         <p>Bank details to be confirmed — we'll update this page once we have them ready.</p>
@@ -1842,8 +1842,8 @@
     const successMsg = document.getElementById('rsvp-success');
 
     submitBtn.disabled = true;
-    const originalBtnText = submitBtn.innerText;
-    submitBtn.innerText = 'Sending...';
+    // const originalBtnText = submitBtn.innerText;
+    // submitBtn.innerText = 'Sending...';
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
@@ -1854,8 +1854,13 @@
       headers: { 'Content-Type': 'application/json' },
       body: new URLSearchParams(data)
     })
-    .then(() => {
-      formContainer.style.display = 'none';
+    .catch(error => {
+      console.error('Error submitting RSVP:', error);
+      alert('Oops! There was an issue submitting your RSVP. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalBtnText;
+    });
+    formContainer.style.display = 'none';
       const introText = document.getElementById('rsvp-intro');
       if (introText) introText.style.display = 'none';
       if (data.attending === 'yes') {
@@ -1867,13 +1872,6 @@
       }
       successMsg.style.display = 'block';
       smoothScrollTo('#rsvp');
-    })
-    .catch(error => {
-      console.error('Error submitting RSVP:', error);
-      alert('Oops! There was an issue submitting your RSVP. Please try again.');
-      submitBtn.disabled = false;
-      submitBtn.innerText = originalBtnText;
-    });
   }
 
   // ── FAQ ACCORDION ──
