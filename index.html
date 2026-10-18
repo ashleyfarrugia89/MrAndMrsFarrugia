@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" as="image" href="IMG_8002.webp" type="image/webp">
+  <link rel="preload" as="image" href="IMG_8002.jpg">
   <meta charset="UTF-8" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
@@ -256,6 +258,11 @@
       height: calc(100dvh - var(--header-height));
       overflow: hidden;
       padding:0;
+    }
+    #hero picture {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
 
     .hero-bg-img {
@@ -1194,7 +1201,11 @@
 
 <!-- Hero -->
 <section id="hero">
-  <img src="IMG_8002.jpg" alt="Holly &amp; Ashley" class="hero-bg-img" />
+  <!-- <img src="IMG_8002.jpg" alt="Holly &amp; Ashley" class="hero-bg-img" /> -->
+  <picture>
+    <source srcset="IMG_8002.webp" type="image/webp">
+    <img src="IMG_8002.jpg" alt="Holly & Ashley" class="hero-bg-img" fetchpriority="high" decoding="async">
+  </picture>
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
@@ -1373,7 +1384,7 @@
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="bridesmaid.png" alt="bridesmaid icon"/></span></div><div class="party-name">Gráinne Mhaoláin</div><div class="party-role">Bridesmaid</div></div>
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="bridesmaid.png" alt="bridesmaid icon"/></span></div><div class="party-name">Steph Burns</div><div class="party-role">Bridesmaid</div></div>
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="bridesmaid.png" alt="bridesmaid icon"/></span></div><div class="party-name">Sarah Miljevic</div><div class="party-role">Bridesmaid</div></div>
-      <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="groomsmen.png" alt="groomsmen icon"/></span></div><div class="party-name">Riccard Farrugia</div><div class="party-role">Best Man</div></div>
+      <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="groomsmen.png" alt="groomsmen icon"/></span></div><div class="party-name">Riccardo Farrugia</div><div class="party-role">Best Man</div></div>
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="groomsmen.png" alt="groomsmen icon"/></span></div><div class="party-name">Raphael Farrugia</div><div class="party-role">Groomsman</div></div>
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="groomsmen.png" alt="groomsmen icon"/></span></div><div class="party-name">Eamon Karson</div><div class="party-role">Groomsman</div></div>
       <div class="party-card"><div class="party-initial"><span class="ootd-icon"><img class="ootd-svg-icon" src="groomsmen.png" alt="groomsmen icon"/></span></div><div class="party-name">Danny Crompton</div><div class="party-role">Groomsman</div></div>
@@ -1583,10 +1594,10 @@
             <input type="text" id="last-name" name="last_name" placeholder="Your last name" required />
           </div>
         </div>
-        <div class="form-group">
+   <!--      <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" name="email" placeholder="your@email.com" required />
-        </div>
+        </div> -->
         <div class="form-group">
           <label>Will you be attending?</label>
           <div class="attendance-toggle">
@@ -1597,14 +1608,8 @@
         </div>
         <div id="attending-fields">
           <div class="form-group" style="margin-top:4px;">
-            <label for="guests">Number of guests (including yourself)</label>
-            <select id="guests" name="guests">
-              <option value="1">1 — just me</option>
-              <option value="2">2 — me + 1</option>
-              <option value="3">3 — me + 2</option>
-              <option value="4">4 — me + 3</option>
-              <option value="5">5 — me + 4</option>
-            </select>
+            <label for="guests">Who will be attending?</label>
+            <input type="text" id="guests" name="guests" placeholder="e.g. Holly Ashbrook, Ashley Farrugia" />
           </div>
           <div class="form-group" style="margin-top:4px;">
             <label for="dietary">Dietary requirements</label>
@@ -1623,8 +1628,8 @@
       </form>
     </div>
     <div class="rsvp-success" id="rsvp-success">
-      <h3>Thank you! 🎉</h3>
-      <p>We've received your RSVP and can't wait to celebrate with you.</p>
+      <h3 id="rsvp-success-heading">Thank you! 🎉</h3>
+      <p id="rsvp-success-message">We've received your RSVP and can't wait to celebrate with you.</p>
     </div>
   </div>
 </section>
@@ -1672,7 +1677,7 @@
 </footer>
 
 <script>
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQm13rDzCAdo5xSAiUvrVVi_xJXOhd4iv-VgEXk5gfwQ9MhX4yyFWXaCIU6hc3oG52-w/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXjHwx7Ib85YRnXMqdw_MSYg9ShrchNzamK2ueAF4EeIMBTKYuGre12t2tjEficU3yQw/exec'
   const site = [...document.querySelectorAll('header, section, footer')];
   site.forEach(el => Object.assign(el.style, { opacity: '0', transition: 'opacity 0.9s ease' }));
 
@@ -1847,13 +1852,19 @@
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: new URLSearchParams(data)
     })
     .then(() => {
       formContainer.style.display = 'none';
       const introText = document.getElementById('rsvp-intro');
       if (introText) introText.style.display = 'none';
-
+      if (data.attending === 'yes') {
+        document.getElementById('rsvp-success-heading').textContent = 'See you there! 🎉';
+        document.getElementById('rsvp-success-message').textContent = 'We\'re so excited to celebrate with you. We\'ll be in touch with more details closer to the day.';
+      } else {
+        document.getElementById('rsvp-success-heading').textContent = 'We\'ll miss you 💛';
+        document.getElementById('rsvp-success-message').textContent = 'Thank you for letting us know. We\'re sorry you can\'t make it, but we appreciate you taking the time to respond.';
+      }
       successMsg.style.display = 'block';
       smoothScrollTo('#rsvp');
     })
