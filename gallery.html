@@ -217,11 +217,11 @@
     /* ── GRID ── */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
     @media (max-width: 480px) {
-      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
     }
     .gallery-item {
       aspect-ratio: 1;
@@ -414,7 +414,8 @@ const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wed
       allKeys = [...xml.querySelectorAll('Key')]
         .map(k => k.textContent)
         .filter(k => /\.(jpg|jpeg|png|webp|gif)$/i.test(k))
-        .reverse();
+        .reverse()
+        .slice(0, 6);
  
       if (allKeys.length === 0) {
         grid.innerHTML = '<p class="gallery-placeholder">No photos yet — be the first to share one!</p>';
