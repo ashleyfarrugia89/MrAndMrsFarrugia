@@ -408,7 +408,7 @@ const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wed
   async function loadGallery() {
     const grid = document.getElementById('gallery-grid');
     try {
-      const res  = await fetch(`${S3_BASE}/?list-type=2&prefix=uploads/`);
+      const res  = await fetch(`${S3_BASE}/?list-type=2&prefix=uploads/&_=${Date.now()}`);
       const text = await res.text();
       const xml  = new DOMParser().parseFromString(text, 'text/xml');
       allKeys = [...xml.querySelectorAll('Key')]
@@ -497,7 +497,7 @@ const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wed
   });
  
   loadGallery();
-  setInterval(loadGallery, 30000);
+  setInterval(loadGallery, 10000);
 </script>
 </body>
 </html>
