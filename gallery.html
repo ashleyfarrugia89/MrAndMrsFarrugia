@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Holly &amp; Ashley</title>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BXC2VQV9V0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BXC2VQV9V0');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --stone: #edf2f7;
+      --warm-white: #fdf9fb;
+      --sage: #7b9eb8;
+      --sage-light: #b8cfe0;
+      --charcoal: #2c2c2c;
+      --mid: #6b6b6b;
+      --border: #e2ded7;
+      --accent: #c4919e;
+      --header-bg: #fdf9fb;
+      --header-height: 96px;
+    }
+    @media (max-width: 600px) {
+      :root { --header-height: 70px; }
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #faf9f7;
+      color: var(--charcoal);
+      font-size: 17px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      left: 0; right: 0;
+      z-index: 100;
+      background: var(--header-bg);
+      border-bottom: 4px solid var(--stone);
+      padding: 18px 40px 14px;
+      transition: padding 0.3s ease;
+    }
+    .header-top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .header-meta-left {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .header-names {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: 'Perpetua', 'Baskerville', 'Georgia', serif;
+      font-size: clamp(34px, 4vw, 44px);
+      color: #222;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .header-names > span {
+      display: inline-block;
+      line-height: 1;
+    }
+
+    .title-ampersand {
+      height: 1.4em;
+      width: auto;
+      display: inline-block;
+      flex-shrink: 0;
+      transform: translateY(-0.14em);
+    }
+    .title-ampersand .st2 {
+      fill: #a5bed8;
+    }
+    .header-meta-right {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #555;
+      text-align: right;
+      font-weight: 600;
+    }
+     /* ── HAMBURGER BUTTON (Hidden Desktop) ── */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      z-index: 101;
+    }
+    .hamburger-btn span {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background-color: var(--charcoal);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger-btn.active span:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+    .hamburger-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-btn.active span:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+    nav {
+      display: flex;
+      #align-items: center;
+      #justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #4a4a4a;
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #000; text-decoration: underline;}
+
+    /* ── PAGE BODY ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: calc(var(--header-height) + 48px) 32px 80px;
+    }
+    @media (max-width: 600px) { main { padding-left: 16px; padding-right: 16px; } }
+
+    /* ── HEADINGS ── */
+    .page-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 10px;
+    }
+    .page-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: var(--charcoal);
+      font-weight: 400;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .page-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 20px;
+    }
+    .page-intro {
+      color: var(--mid);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 36px;
+    }
+
+    /* ── UPLOAD ── */
+    .upload-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .gallery-upload-btn {
+      display: inline-block;
+      background: var(--sage);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .gallery-upload-btn:hover { background: var(--accent); }
+    .upload-status {
+      font-size: 14px;
+      color: var(--mid);
+    }
+
+    /* ── GRID ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    }
+    .gallery-item {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 6px;
+      cursor: pointer;
+      background: var(--stone);
+      display: block;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-placeholder {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--mid);
+      padding: 60px 0;
+      font-size: 15px;
+    }
+
+    /* ── LIGHTBOX ── */
+    #gallery-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+    #gallery-lightbox.open { display: flex; }
+    #lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 18px; right: 24px;
+      color: #fff;
+      font-size: 36px;
+      line-height: 1;
+      cursor: pointer;
+      background: none;
+      border: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-prev, .lightbox-next {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      color: #fff;
+      font-size: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.6;
+      padding: 16px;
+      transition: opacity 0.2s;
+    }
+    .lightbox-prev:hover, .lightbox-next:hover { opacity: 1; }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
+    /* ── RESPONSIVE & MOBILE HAMBURGER MENU ── */
+    @media (max-width: 768px) {
+      :root {
+        --header-height: 70px;
+      }
+      .site-header { padding: 14px 20px; }
+      .header-meta-left, .header-meta-right { display: none !important; }
+      
+      .header-top { 
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 0 !important;
+      }
+
+      .hamburger-btn {
+        display: flex !important;
+      }
+
+      nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+        opacity: 0;
+        width: 100%;
+        background: var(--header-bg);
+        padding: 0;
+      }
+
+      nav.nav-open {
+        max-height: 450px;
+        opacity: 1;
+        padding-top: 18px;
+        padding-bottom: 8px;
+        border-top: 1px solid var(--stone);
+        margin-top: 12px;
+      }
+
+      nav a {
+        font-size: 11px !important;
+        letter-spacing: 0.2em !important;
+        padding: 4px 0;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-top">
+    <div class="header-meta-left">
+      <nav id="siteNav">
+        <a href="#main">Back to Main Website</a>
+      </nav>
+    16 MAY 2027 &nbsp;·&nbsp; PECKFORTON CASTLE, CHESHIRE
+    </div>
+
+    <a href="#hero" class="header-names">
+      <span>Holly</span>
+      <svg class="title-ampersand" viewBox="260 240 120 150" xmlns="http://www.w3.org/2000/svg" aria-label="&amp;">
+        <path class="st2" d="M333.79,339.08c.85,1.9,1.49,3.95,1.93,6.15.44,2.2.66,4.56.66,7.06,0,8.71-2.9,16.05-8.69,22.03-5.79,5.98-12.82,8.97-21.09,8.97-5.22,0-9.47-1.34-12.75-4.01-3.29-2.68-4.93-6.1-4.93-10.26,0-3.05,1.25-5.82,3.76-8.31,2.51-2.49,5.03-3.73,7.57-3.73.3,0,.52.03.63.08.12.05.19.13.23.23,0,.34-.61.73-1.83,1.17-1.02.37-1.79.71-2.34,1.02-2.07,1.05-3.64,2.38-4.72,3.99-1.08,1.61-1.63,3.4-1.63,5.36,0,3.05,1.25,5.55,3.73,7.5,2.49,1.95,5.72,2.92,9.68,2.92,4.23,0,8.42-1.05,12.55-3.15,4.13-2.1,7.76-5,10.87-8.69,2.34-2.91,4.12-5.9,5.34-8.97,1.22-3.07,1.83-6.16,1.83-9.27,0-1.32-.16-2.69-.48-4.12s-.82-3-1.5-4.73c-3.12,3.76-6.35,6.55-9.71,8.38-3.35,1.83-6.88,2.74-10.57,2.74-4.34,0-7.82-1.24-10.44-3.73s-3.94-5.78-3.94-9.88c0-4.88,2-9.11,6-12.7,4-3.59,10.28-6.78,18.85-9.55v-.36c-.41-2.57-.61-4.37-.61-5.39,0-4.78,1.34-8.88,4.02-12.32,2.68-3.44,5.76-5.16,9.25-5.16,2.61,0,4.69.75,6.25,2.26,1.56,1.51,2.34,3.53,2.34,6.07,0,3.32-1.42,6.23-4.27,8.74-2.85,2.51-7.79,5.06-14.84,7.67.41,1.76,1.3,4.37,2.67,7.83,1.37,3.46,3.18,7.66,5.41,12.6,1.05-1.35,2.52-3.3,4.42-5.84,13.01-17.28,22.15-25.91,27.44-25.91,1.15,0,2.12.42,2.9,1.27.78.85,1.17,1.88,1.17,3.1,0,1.12-.36,2.03-1.07,2.72-.71.69-1.64,1.04-2.79,1.04-1.02,0-2.05-.56-3.1-1.68-1.05-1.12-1.85-1.68-2.39-1.68-2.74,0-9.11,6.57-19.11,19.71-2.85,3.76-5.08,6.71-6.71,8.84ZM331.91,338.82c-2.1-4.64-3.83-8.65-5.18-12.02-1.36-3.37-2.47-6.39-3.35-9.07-6.34,2.54-11.2,5.71-14.58,9.5-3.39,3.79-5.08,7.94-5.08,12.45,0,2.98.86,5.45,2.59,7.39,1.73,1.95,3.88,2.92,6.45,2.92,3.52,0,6.85-.91,9.99-2.74,3.13-1.83,6.19-4.64,9.17-8.44ZM324.29,315.1c6.78-2.2,11.51-4.44,14.2-6.71,2.69-2.27,4.04-5.01,4.04-8.23,0-1.86-.64-3.39-1.93-4.57-1.29-1.19-2.93-1.78-4.93-1.78-3.12,0-5.89,1.59-8.33,4.78-2.44,3.18-3.66,6.96-3.66,11.33,0,1.02.19,2.58.56,4.67.03.24.05.41.05.51Z"/>
+      </svg>
+      <span>Ashley</span>
+    </a>
+    <div class="header-meta-right">#MrAndMrsFarrugia</div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleNav()" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <p class="page-eyebrow">Your memories</p>
+  <h1 class="page-title">Gallery</h1>
+  <div class="page-divider"></div>
+  <p class="page-intro">Share your photos from the day! Upload your pictures and they'll appear here for everyone to enjoy.</p>
+
+  <div class="upload-row">
+    <label class="gallery-upload-btn" for="gallery-file-input">📷 &nbsp;Share a photo</label>
+    <input type="file" id="gallery-file-input" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none;" onchange="handleUpload(this)" />
+    <span class="upload-status" id="upload-status"></span>
+  </div>
+
+  <div class="gallery-grid" id="gallery-grid">
+    <p class="gallery-placeholder">Loading photos…</p>
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div id="gallery-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-prev" onclick="event.stopPropagation(); shiftLightbox(-1)">&#8249;</button>
+  <button class="lightbox-next" onclick="event.stopPropagation(); shiftLightbox(1)">&#8250;</button>
+  <img id="lightbox-img" src="" alt="Wedding photo" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+  const S3_BASE    = 'https://s3.eu-north-1.amazonaws.com/farrugia.wedding.gallery';
+ 
+const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wedding/presign';
+ 
+  let allKeys = [];
+  let lightboxIndex = 0;
+ 
+  async function loadGallery() {
+    const grid = document.getElementById('gallery-grid');
+    try {
+      const res  = await fetch(`${S3_BASE}/?list-type=2&prefix=uploads/`);
+      const text = await res.text();
+      const xml  = new DOMParser().parseFromString(text, 'text/xml');
+      allKeys = [...xml.querySelectorAll('Key')]
+        .map(k => k.textContent)
+        .filter(k => /\.(jpg|jpeg|png|webp|gif)$/i.test(k))
+        .reverse();
+ 
+      if (allKeys.length === 0) {
+        grid.innerHTML = '<p class="gallery-placeholder">No photos yet — be the first to share one!</p>';
+        return;
+      }
+      grid.innerHTML = allKeys.map((key, i) =>
+        `<div class="gallery-item" onclick="openLightbox(${i})">
+          <img src="${S3_BASE}/${key}" loading="lazy" alt="Wedding photo" />
+        </div>`
+      ).join('');
+    } catch (err) {
+      grid.innerHTML = '<p class="gallery-placeholder">Could not load photos. Please refresh to try again.</p>';
+      console.warn('Gallery load error:', err);
+    }
+  }
+ 
+  const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+ 
+  async function handleUpload(input) {
+    const files  = [...input.files];
+    if (!files.length) return;
+    const status = document.getElementById('upload-status');
+ 
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+      let ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
+      let mime = MIME[ext] || file.type || 'image/jpeg';
+ 
+      // HEIC/HEIF can't be uploaded directly — the file picker auto-converts on iPhone
+      // when accept doesn't include HEIC. This block only fires if someone drags a
+      // .heic from macOS Finder; just show a clear message.
+      if (ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif') {
+        status.textContent = 'HEIC files can\'t be uploaded directly. On iPhone, tap Share → Save Image to get a JPEG first.';
+        input.value = '';
+        return;
+      }
+ 
+      status.textContent = files.length > 1
+        ? `Uploading ${i + 1} of ${files.length}…`
+        : 'Uploading…';
+ 
+      try {
+        const presignRes = await fetch(`${PRESIGN_API}?ext=${ext}`);
+        if (!presignRes.ok) throw new Error(`Presign failed: ${presignRes.status}`);
+        const { url } = await presignRes.json();
+        const s3Res = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': mime } });
+        if (!s3Res.ok) throw new Error(`S3 upload failed: ${s3Res.status}`);
+      } catch (err) {
+        console.error('Upload error:', err);
+        status.textContent = `Could not upload ${files[i].name} — please try again.`;
+        input.value = '';
+        return;
+      }
+    }
+ 
+    status.textContent = files.length === 1 ? 'Photo shared! 🎉' : `${files.length} photos shared! 🎉`;
+    input.value = '';
+    setTimeout(() => { status.textContent = ''; loadGallery(); }, 2000);
+  }
+ 
+  function openLightbox(index) {
+    lightboxIndex = index;
+    document.getElementById('lightbox-img').src = `${S3_BASE}/${allKeys[index]}`;
+    document.getElementById('gallery-lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('gallery-lightbox').classList.remove('open');
+    document.getElementById('lightbox-img').src = '';
+    document.body.style.overflow = '';
+  }
+  function shiftLightbox(dir) {
+    lightboxIndex = (lightboxIndex + dir + allKeys.length) % allKeys.length;
+    document.getElementById('lightbox-img').src = `${S3_BASE}/${allKeys[lightboxIndex]}`;
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'ArrowRight')  shiftLightbox(1);
+    if (e.key === 'ArrowLeft')   shiftLightbox(-1);
+  });
+ 
+  loadGallery();
+</script>
+</body>
+</html>
