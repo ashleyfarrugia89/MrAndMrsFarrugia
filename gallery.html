@@ -411,11 +411,15 @@ const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wed
       const res  = await fetch(`${S3_BASE}/?list-type=2&prefix=uploads/&_=${Date.now()}`);
       const text = await res.text();
       const xml  = new DOMParser().parseFromString(text, 'text/xml');
-      allKeys = [...xml.querySelectorAll('Key')]
-        .map(k => k.textContent)
-        .filter(k => /\.(jpg|jpeg|png|webp|gif)$/i.test(k))
-        .reverse()
-        .slice(0, 6);
+      allKeys = [...xml.querySelectorAll('Contents')]
+        .map(el => ({
+          key:          el.querySelector('Key').textContent,
+          lastModified: el.querySelector('LastModified').textContent,
+        }))
+        .filter(o => /\.(jpg|jpeg|png|webp|gif)$/i.test(o.key))
+        .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified))
+        .slice(0, 6)
+        .map(o => o.key);
  
       if (allKeys.length === 0) {
         grid.innerHTML = '<p class="gallery-placeholder">No photos yet — be the first to share one!</p>';
@@ -498,7 +502,7 @@ const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wed
   });
  
   loadGallery();
-  setInterval(loadGallery, 10000);
+  setInterval(loadGallery, 30000);
 </script>
 </body>
 </html>
