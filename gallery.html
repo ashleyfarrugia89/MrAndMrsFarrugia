@@ -21,7 +21,7 @@
 <header class="site-header">
   <div class="header-top">
     <div class="header-meta-left">
-    <nav class="gallery"><a href="index.html">Back to Main Website</a></nav>
+    <nav class="gallery"><a href="/">Back to Main Website</a></nav>
     <br />
     <span> 16 MAY 2027 &nbsp;·&nbsp; PECKFORTON CASTLE, CHESHIRE </span>
   </div>
@@ -70,42 +70,50 @@
     </div>
   </main>
    
-  <!-- Caption modal -->
-  <div id="caption-modal">
-    <div class="caption-modal-box">
-      <img id="caption-preview" class="caption-modal-preview" src="" alt="Preview" />
-      <label class="caption-modal-label" for="caption-input">Add a caption</label>
-      <textarea
-        id="caption-input"
-        class="caption-modal-input"
-        rows="3"
-        maxlength="500"
-        placeholder="e.g. Holly looking absolutely gorgeous 💕"
-      ></textarea>
-      <p class="caption-modal-hint">Optional — leave blank to upload without a caption.</p>
-      <div class="caption-modal-actions">
-        <button class="caption-btn-cancel" onclick="cancelUpload()">Cancel</button>
-        <button class="caption-btn-upload" id="caption-upload-btn" onclick="submitUpload()">Upload</button>
-      </div>
+<!-- Caption modal -->
+<div id="caption-modal">
+  <div class="caption-modal-box">
+    <img id="caption-preview" class="caption-modal-preview" src="" alt="Preview" />
+    <label class="caption-modal-label" for="author-input">Your name</label>
+    <input
+      type="text"
+      id="author-input"
+      class="caption-modal-input"
+      maxlength="60"
+      placeholder="e.g. Sarah"
+      autocomplete="name"
+    />
+    <label class="caption-modal-label" for="caption-input" style="margin-top:14px;">Add a caption</label>
+    <textarea
+      id="caption-input"
+      class="caption-modal-input"
+      rows="3"
+      maxlength="500"
+      placeholder="e.g. Holly looking absolutely gorgeous 💕"
+      oninput="updateCaptionCount(this)"
+    ></textarea>
+    <p class="caption-modal-hint">Caption optional — leave blank to skip. <span id="caption-count" style="float:right;opacity:0.5;">500</span></p>
+    <div class="caption-modal-actions">
+      <button class="caption-btn-cancel" onclick="cancelUpload()">Cancel</button>
+      <button class="caption-btn-upload" id="caption-upload-btn" onclick="submitUpload()">Upload</button>
     </div>
   </div>
-   
-  <!-- Lightbox -->
-  <div id="gallery-lightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-    <button class="lightbox-prev" onclick="event.stopPropagation(); shiftLightbox(-1)">&#8249;</button>
-    <button class="lightbox-next" onclick="event.stopPropagation(); shiftLightbox(1)">&#8250;</button>
-    <img id="lightbox-img" src="" alt="Wedding photo" onclick="event.stopPropagation()" />
-    <p id="lightbox-caption" onclick="event.stopPropagation()"></p>
-  </div>
 </div>
-</section>
-
+ 
+<!-- Lightbox -->
+<div id="gallery-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-prev" onclick="event.stopPropagation(); shiftLightbox(-1)">&#8249;</button>
+  <button class="lightbox-next" onclick="event.stopPropagation(); shiftLightbox(1)">&#8250;</button>
+  <img id="lightbox-img" src="" alt="Wedding photo" onclick="event.stopPropagation()" />
+  <p id="lightbox-caption" onclick="event.stopPropagation()"></p>
+</div>
+ 
 <script>
-    const S3_BASE     = 'https://s3.eu-north-1.amazonaws.com/farrugia.wedding.gallery';
+  const S3_BASE     = 'https://s3.eu-north-1.amazonaws.com/farrugia.wedding.gallery';
   const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wedding/presign';
  
-  // allPhotos: [{key, caption}] sorted newest-first
+  // allPhotos: [{key, caption, author}] sorted newest-first
   let allPhotos = [];
   let displayCount = 6;
   let lightboxIndex = 0;
@@ -113,6 +121,18 @@
   // Pending files from the file picker (waiting for caption modal)
   let pendingFiles = [];
   let pendingIndex = 0;
+ 
+  // Author name — persisted in localStorage, asked once per bulk upload
+  // On first upload of a session the user sets it; subsequent photos in the
+  // same batch re-use it without asking again.
+  let sessionAuthor = localStorage.getItem('weddingGalleryAuthor') || '';
+ 
+  function getOrGenerateGuest() {
+    // If still no name after the modal, assign a stable Guest number for this session
+    if (!sessionGuestTag) sessionGuestTag = 'Guest ' + Math.floor(1000 + Math.random() * 9000);
+    return sessionGuestTag;
+  }
+  let sessionGuestTag = '';
  
   // ── DATA LOADING ──
  
@@ -141,10 +161,14 @@
         try {
           const r = await fetch(`${S3_BASE}/${jsonKey}?_=${Date.now()}`);
           const data = await r.json();
-          return { key: item.key, caption: (data.caption || '').trim() };
-        } catch { /* no caption */ }
+          return {
+            key: item.key,
+            caption: (data.caption || '').trim(),
+            author:  (data.author  || '').trim(),
+          };
+        } catch { /* no sidecar */ }
       }
-      return { key: item.key, caption: '' };
+      return { key: item.key, caption: '', author: '' };
     }));
   }
  
@@ -184,14 +208,22 @@
     }
  
     const items = visible.map((photo, i) => {
-      const captionHtml = photo.caption
-        ? `<div class="gallery-item-caption">${escHtml(photo.caption)}</div>`
+      const hasCaption = !!photo.caption;
+      const hasAuthor  = !!photo.author;
+      const metaHtml = (hasCaption || hasAuthor)
+        ? `<div class="gallery-item-caption">
+             <p class="caption-line">${
+               hasAuthor ? `<strong class="caption-author">${escHtml(photo.author)}</strong> ` : ''
+             }${
+               hasCaption ? escHtml(photo.caption) : ''
+             }</p>
+           </div>`
         : '';
       return `<div class="gallery-item" onclick="openLightbox(${i})">
         <div class="gallery-item-img">
           <img src="${S3_BASE}/${photo.key}" loading="lazy" alt="Wedding photo" />
         </div>
-        ${captionHtml}
+        ${metaHtml}
       </div>`;
     }).join('');
  
@@ -202,6 +234,25 @@
       : '';
  
     grid.innerHTML = items + seeMore;
+    requestAnimationFrame(addCaptionToggles);
+  }
+ 
+  function addCaptionToggles() {
+    document.querySelectorAll('.caption-line').forEach(el => {
+      if (el.scrollHeight > el.clientHeight + 1) {
+        const btn = document.createElement('button');
+        btn.className = 'caption-more-btn';
+        btn.textContent = 'more';
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          el.style.webkitLineClamp = 'unset';
+          el.style.overflow = 'visible';
+          el.style.display = 'block';
+          btn.remove();
+        };
+        el.parentNode.appendChild(btn);
+      }
+    });
   }
  
   function showMore() {
@@ -211,6 +262,20 @@
  
   function escHtml(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+ 
+  // Count remaining caption characters using Unicode code points (not UTF-16 units),
+  // so emoji like 🏰 count as 1 not 2.
+  function updateCaptionCount(el) {
+    const max = parseInt(el.maxLength, 10);
+    const used = [...el.value].length; // spread iterates code points
+    const remaining = max - used;
+    const counter = document.getElementById('caption-count');
+    if (counter) counter.textContent = remaining;
+    // Silently trim if pasted text pushes over the code-point limit
+    if (used > max) {
+      el.value = [...el.value].slice(0, max).join('');
+    }
   }
  
   // ── CAPTION MODAL ──
@@ -225,15 +290,20 @@
  
   function showModalForFile(idx) {
     const file = pendingFiles[idx];
-    const preview = document.getElementById('caption-preview');
+    const preview      = document.getElementById('caption-preview');
     const captionInput = document.getElementById('caption-input');
+    const authorInput  = document.getElementById('author-input');
  
     // Show image preview
     const url = URL.createObjectURL(file);
     preview.onload = () => URL.revokeObjectURL(url);
     preview.src = url;
  
+    // Pre-fill author from memory / localStorage; user can still change it
+    authorInput.value = sessionAuthor;
+ 
     captionInput.value = '';
+    updateCaptionCount(captionInput);
     document.getElementById('upload-status').textContent =
       pendingFiles.length > 1 ? `Photo ${idx + 1} of ${pendingFiles.length}` : '';
     document.getElementById('caption-upload-btn').disabled = false;
@@ -241,7 +311,8 @@
       pendingFiles.length > 1 && idx < pendingFiles.length - 1 ? 'Next →' : 'Upload';
  
     document.getElementById('caption-modal').classList.add('open');
-    captionInput.focus();
+    // Focus name field on first photo, caption field on subsequent
+    (idx === 0 && !sessionAuthor ? authorInput : captionInput).focus();
   }
  
   function cancelUpload() {
@@ -254,6 +325,12 @@
   async function submitUpload() {
     const file    = pendingFiles[pendingIndex];
     const caption = document.getElementById('caption-input').value.trim();
+ 
+    // Save author for this batch and persist across page loads
+    const typedAuthor = document.getElementById('author-input').value.trim();
+    const author = typedAuthor || getOrGenerateGuest();
+    sessionAuthor = typedAuthor; // remember what they typed (blank = keep asking)
+    if (typedAuthor) localStorage.setItem('weddingGalleryAuthor', typedAuthor);
     const btn     = document.getElementById('caption-upload-btn');
     const status  = document.getElementById('upload-status');
  
@@ -279,11 +356,11 @@
       const s3Res = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': mime } });
       if (!s3Res.ok) throw new Error(`S3 upload failed: ${s3Res.status}`);
  
-      // Upload caption sidecar if provided
-      if (caption && captionUrl) {
+      // Always upload sidecar — author is always set, caption is optional
+      if (captionUrl) {
         await fetch(captionUrl, {
           method: 'PUT',
-          body: JSON.stringify({ caption }),
+          body: JSON.stringify({ author, ...(caption ? { caption } : {}) }),
           headers: { 'Content-Type': 'application/json' },
         });
       }
@@ -317,7 +394,9 @@
     lightboxIndex = index;
     const photo = allPhotos[index];
     document.getElementById('lightbox-img').src = `${S3_BASE}/${photo.key}`;
-    document.getElementById('lightbox-caption').textContent = photo.caption || '';
+    document.getElementById('lightbox-caption').innerHTML =
+      (photo.author  ? `<strong class="lightbox-author">${escHtml(photo.author)}</strong> ` : '') +
+      (photo.caption ? escHtml(photo.caption) : '');
     document.getElementById('gallery-lightbox').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -333,7 +412,9 @@
     lightboxIndex = (lightboxIndex + dir + allPhotos.length) % allPhotos.length;
     const photo = allPhotos[lightboxIndex];
     document.getElementById('lightbox-img').src = `${S3_BASE}/${photo.key}`;
-    document.getElementById('lightbox-caption').textContent = photo.caption || '';
+    document.getElementById('lightbox-caption').innerHTML =
+      (photo.author  ? `<strong class="lightbox-author">${escHtml(photo.author)}</strong> ` : '') +
+      (photo.caption ? escHtml(photo.caption) : '');
   }
  
   document.addEventListener('keydown', e => {
@@ -343,9 +424,12 @@
   });
  
   // Close modal on backdrop click
-  document.getElementById('caption-modal').addEventListener('click', function(e) {
-    if (e.target === this) cancelUpload();
-  });
+  const _captionModal = document.getElementById('caption-modal');
+  if (_captionModal) {
+    _captionModal.addEventListener('click', function(e) {
+      if (e.target === this) cancelUpload();
+    });
+  }
  
   loadGallery();
   setInterval(silentRefresh, 10000);
