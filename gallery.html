@@ -70,6 +70,7 @@
     </div>
   </main>
    
+
 <!-- Caption modal -->
 <div id="caption-modal">
   <div class="caption-modal-box">
@@ -231,9 +232,23 @@
   }
  
   function updateReactionBar(key, reactions) {
-    // Update all reaction bars in the grid that match this key
-    document.querySelectorAll(`.reaction-bar[data-key="${CSS.escape(key)}"]`).forEach(bar => {
-      bar.innerHTML = reactionBarHtml(key, reactions);
+    // Update each button in-place to avoid destroying hover/focus state
+    document.querySelectorAll(`.reaction-bar[data-key="${CSS.escape(key)}"] .reaction-btn`).forEach(btn => {
+      const emoji   = btn.dataset.emoji;
+      const count   = (reactions || {})[emoji] || 0;
+      const reacted = hasReacted(key, emoji);
+      btn.classList.toggle('reacted', reacted);
+      let countEl = btn.querySelector('.reaction-count');
+      if (count) {
+        if (!countEl) {
+          countEl = document.createElement('span');
+          countEl.className = 'reaction-count';
+          btn.appendChild(countEl);
+        }
+        countEl.textContent = count;
+      } else if (countEl) {
+        countEl.remove();
+      }
     });
     // Update lightbox if it's showing this photo
     if (allPhotos[lightboxIndex] && allPhotos[lightboxIndex].key === key) {
