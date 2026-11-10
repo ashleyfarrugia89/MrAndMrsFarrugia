@@ -1158,7 +1158,7 @@ footer {
 }
 @media (max-width: 480px) {
   .gallery-grid { grid-template-columns: 1fr; gap: 6px; align-items: start; }
-  .reaction-img svg { width: 26px; height: 26px; }
+  .reaction-img svg { width: 36px; height: 36px; }
   .reaction-btn { padding: 7px 11px; min-height: 44px; }
 }
 
@@ -1189,7 +1189,7 @@ footer {
   font-size: 13px;
   color: var(--mid);
   line-height: 1.5;
-  background: #fff;
+/*  background: #fff;*/
   min-width: 0; /* prevents flex child overflow from blocking clamp */
 }
 .gallery-item-caption:empty { display: none; }
@@ -1416,7 +1416,7 @@ footer {
   display: flex;
   gap: 4px;
   padding: 6px 8px;
-  background: #fff;
+/*  background: #fff;*/
   flex-wrap: wrap;
 }
 
@@ -1450,8 +1450,8 @@ footer {
   transition: transform 0.15s ease;
 }
 .reaction-img svg {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   display: block;
 }
 @media (hover: hover) {
