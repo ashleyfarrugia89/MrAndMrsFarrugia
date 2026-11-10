@@ -1187,8 +1187,8 @@ footer {
   font-size: 13px;
   color: var(--mid);
   line-height: 1.5;
-/*  background: #fff;*/
-  border-top: 1px solid var(--border);
+  background: #fff;
+  min-width: 0; /* prevents flex child overflow from blocking clamp */
 }
 .gallery-item-caption:empty { display: none; }
 
@@ -1215,9 +1215,11 @@ footer {
   margin: 0;
   color: var(--mid);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  word-break: break-word;
 }
 
 /* Lightbox — same inline bold treatment */
@@ -1407,3 +1409,68 @@ footer {
 .lightbox-prev:hover, .lightbox-next:hover { opacity: 1; }
 .lightbox-prev { left: 12px; }
 .lightbox-next { right: 12px; }
+/* ── Reaction bar ── */
+.reaction-bar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 9px;              /* bigger tap target */
+  min-height: 36px;              /* guarantees minimum touch height */
+  -webkit-tap-highlight-color: transparent;  /* removes iOS grey tap flash */
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.reaction-btn-lg           { font-size: 20px; padding: 5px 11px; gap: 5px; }
+.reacted[data-emoji="❤️"] .rx-fill { fill: #e0245e; }
+.reacted[data-emoji="😍"] .rx-fill { fill: #ffcc4d; }
+.reacted[data-emoji="😂"] .rx-fill { fill: #ffcc4d; }
+.reacted[data-emoji="🥂"] .rx-fill { fill: #f4c01e; }
+.reacted[data-emoji="😮"] .rx-fill { fill: #ffcc4d; }
+
+.reaction-img {
+  display: inline-flex;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+.reaction-img svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.reaction-btn:hover .reaction-img { transform: scale(1.35); }
+.reaction-btn-lg .reaction-img svg { width: 28px; height: 28px; }
+
+.reaction-count {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  color: var(--mid);
+  line-height: 1;
+}
+.reaction-btn-lg .reaction-count  { font-size: 14px; color: rgba(255,255,255,0.8); }
+
+/* Lightbox reactions row */
+#lightbox-reactions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 24px;
+  min-height: 36px;
+}
+/*#lightbox-reactions .reaction-btn-lg:hover  { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); }
+#lightbox-reactions .reaction-btn-lg.reacted { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }*/
