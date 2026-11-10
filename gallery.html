@@ -221,7 +221,7 @@
       gap: 10px;
     }
     @media (max-width: 480px) {
-      .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
     }
     .gallery-item {
       aspect-ratio: 1;
@@ -397,112 +397,6 @@
   <img id="lightbox-img" src="" alt="Wedding photo" onclick="event.stopPropagation()" />
 </div>
 
-<script>
-  const S3_BASE    = 'https://s3.eu-north-1.amazonaws.com/farrugia.wedding.gallery';
- 
-const PRESIGN_API = 'https://7vy30zvgz9.execute-api.eu-north-1.amazonaws.com/wedding/presign';
- 
-  let allKeys = [];
-  let lightboxIndex = 0;
- 
-  async function loadGallery() {
-    const grid = document.getElementById('gallery-grid');
-    try {
-      const res  = await fetch(`${S3_BASE}/?list-type=2&prefix=uploads/&_=${Date.now()}`);
-      const text = await res.text();
-      const xml  = new DOMParser().parseFromString(text, 'text/xml');
-      allKeys = [...xml.querySelectorAll('Contents')]
-        .map(el => ({
-          key:          el.querySelector('Key').textContent,
-          lastModified: el.querySelector('LastModified').textContent,
-        }))
-        .filter(o => /\.(jpg|jpeg|png|webp|gif)$/i.test(o.key))
-        .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified))
-        .slice(0, 6)
-        .map(o => o.key);
- 
-      if (allKeys.length === 0) {
-        grid.innerHTML = '<p class="gallery-placeholder">No photos yet — be the first to share one!</p>';
-        return;
-      }
-      grid.innerHTML = allKeys.map((key, i) =>
-        `<div class="gallery-item" onclick="openLightbox(${i})">
-          <img src="${S3_BASE}/${key}" loading="lazy" alt="Wedding photo" />
-        </div>`
-      ).join('');
-    } catch (err) {
-      grid.innerHTML = '<p class="gallery-placeholder">Could not load photos. Please refresh to try again.</p>';
-      console.warn('Gallery load error:', err);
-    }
-  }
- 
-  const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
- 
-  async function handleUpload(input) {
-    const files  = [...input.files];
-    if (!files.length) return;
-    const status = document.getElementById('upload-status');
- 
-    for (let i = 0; i < files.length; i++) {
-      let file = files[i];
-      let ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
-      let mime = MIME[ext] || file.type || 'image/jpeg';
- 
-      // HEIC/HEIF can't be uploaded directly — the file picker auto-converts on iPhone
-      // when accept doesn't include HEIC. This block only fires if someone drags a
-      // .heic from macOS Finder; just show a clear message.
-      if (ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif') {
-        status.textContent = 'HEIC files can\'t be uploaded directly. On iPhone, tap Share → Save Image to get a JPEG first.';
-        input.value = '';
-        return;
-      }
- 
-      status.textContent = files.length > 1
-        ? `Uploading ${i + 1} of ${files.length}…`
-        : 'Uploading…';
- 
-      try {
-        const presignRes = await fetch(`${PRESIGN_API}?ext=${ext}`);
-        if (!presignRes.ok) throw new Error(`Presign failed: ${presignRes.status}`);
-        const { url } = await presignRes.json();
-        const s3Res = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': mime } });
-        if (!s3Res.ok) throw new Error(`S3 upload failed: ${s3Res.status}`);
-      } catch (err) {
-        console.error('Upload error:', err);
-        status.textContent = `Could not upload ${files[i].name} — please try again.`;
-        input.value = '';
-        return;
-      }
-    }
- 
-    status.textContent = files.length === 1 ? 'Photo shared! 🎉' : `${files.length} photos shared! 🎉`;
-    input.value = '';
-    setTimeout(() => { status.textContent = ''; loadGallery(); }, 2000);
-  }
- 
-  function openLightbox(index) {
-    lightboxIndex = index;
-    document.getElementById('lightbox-img').src = `${S3_BASE}/${allKeys[index]}`;
-    document.getElementById('gallery-lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeLightbox() {
-    document.getElementById('gallery-lightbox').classList.remove('open');
-    document.getElementById('lightbox-img').src = '';
-    document.body.style.overflow = '';
-  }
-  function shiftLightbox(dir) {
-    lightboxIndex = (lightboxIndex + dir + allKeys.length) % allKeys.length;
-    document.getElementById('lightbox-img').src = `${S3_BASE}/${allKeys[lightboxIndex]}`;
-  }
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape')      closeLightbox();
-    if (e.key === 'ArrowRight')  shiftLightbox(1);
-    if (e.key === 'ArrowLeft')   shiftLightbox(-1);
-  });
- 
-  loadGallery();
-  setInterval(loadGallery, 30000);
-</script>
+`
 </body>
 </html>
