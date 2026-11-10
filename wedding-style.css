@@ -1167,9 +1167,10 @@ footer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  align-items: start; /* items don't stretch to match tallest in row */
 }
 @media (max-width: 480px) {
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; align-items: start;}
 }
 
 .gallery-item {
