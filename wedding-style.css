@@ -761,7 +761,7 @@ input, select, textarea {
   transition: border-color 0.2s;
   width: 100%;
 }
-input::placeholder, textarea::placeholder { color: rgba(250,249,247,0.4); }
+#rsvp input::placeholder, #rsvp textarea::placeholder { color: rgba(250,249,247,0.4); }
 input:focus, select:focus, textarea:focus { border-color: var(--sage); }
 select option { background: var(--charcoal); }
 textarea { resize: vertical; min-height: 100px; }
