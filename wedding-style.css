@@ -259,6 +259,10 @@ nav {
   gap: 24px;
   flex-wrap: wrap;
 }
+nav.gallery{
+  align-items: left;
+  justify-content: left;
+}
 
 
 /* ══════════════════════════════════════════════════════════
