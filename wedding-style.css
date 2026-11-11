@@ -1166,7 +1166,6 @@ footer {
   overflow: hidden;
   border-radius: 6px;
   cursor: pointer;
-/*  background: var(--stone);*/
   display: flex;
   flex-direction: column;
 }
@@ -1186,13 +1185,105 @@ footer {
 
 .gallery-item-caption {
   padding: 8px 10px;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--mid);
   line-height: 1.5;
-/*  background: #fff;*/
   min-width: 0; /* prevents flex child overflow from blocking clamp */
 }
 .gallery-item-caption:empty { display: none; }
+
+
+/* ── Reaction bar ── */
+.reaction-bar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+/*  background: #fff;*/
+  flex-wrap: wrap;
+}
+
+.reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 9px;              /* bigger tap target */
+  min-height: 36px;              /* guarantees minimum touch height */
+  -webkit-tap-highlight-color: transparent;  /* removes iOS grey tap flash */
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.reaction-btn-lg           { font-size: 20px; padding: 5px 11px; gap: 5px; }
+.reacted[data-emoji="❤️"] .rx-fill { fill: #e0245e; }
+.reacted[data-emoji="😍"] .rx-fill { fill: #ffcc4d; }
+.reacted[data-emoji="😂"] .rx-fill { fill: #ffcc4d; }
+.reacted[data-emoji="🥂"] .rx-fill { fill: #f4c01e; }
+.reacted[data-emoji="😮"] .rx-fill { fill: #ffcc4d; }
+
+.reaction-img {
+  display: inline-flex;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+.reaction-img svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+@media (hover: hover) {
+  .reaction-btn:hover .reaction-img { transform: scale(1.35); }
+}
+.reaction-btn-lg .reaction-img svg { width: 24px; height: 24px; }
+
+.reaction-count {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  color: var(--mid);
+  line-height: 1;
+}
+.reaction-btn-lg .reaction-count  { font-size: 14px; color: rgba(255,255,255,0.8); }
+
+/* Lightbox reactions row */
+#lightbox-reactions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 24px;
+  min-height: 36px;
+}
+
+/* New photos banner */
+.new-photos-banner {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 16px;
+  padding: 10px 20px;
+  background: var(--sage);
+  color: #fff;
+  border-radius: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: none;
+  animation: slideDown 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.new-photos-banner:hover { background: var(--charcoal); }
+ 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .caption-more-btn {
   display: block;
@@ -1200,7 +1291,7 @@ footer {
   border: none;
   padding: 2px 0 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--charcoal);
   cursor: pointer;
   text-align: left;
@@ -1209,7 +1300,7 @@ footer {
 
 .caption-author {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--charcoal);
   font-weight: 700;
 }
@@ -1229,7 +1320,7 @@ footer {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 700;
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .gallery-placeholder {
@@ -1237,7 +1328,7 @@ footer {
   text-align: center;
   color: var(--mid);
   padding: 60px 0;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .see-more-row {
@@ -1253,7 +1344,7 @@ footer {
   border-radius: 2px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: border-color 0.2s, color 0.2s;
@@ -1411,70 +1502,3 @@ footer {
 .lightbox-prev:hover, .lightbox-next:hover { opacity: 1; }
 .lightbox-prev { left: 12px; }
 .lightbox-next { right: 12px; }
-/* ── Reaction bar ── */
-.reaction-bar {
-  display: flex;
-  gap: 4px;
-  padding: 6px 8px;
-/*  background: #fff;*/
-  flex-wrap: wrap;
-}
-
-.reaction-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  background: none;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 9px;              /* bigger tap target */
-  min-height: 36px;              /* guarantees minimum touch height */
-  -webkit-tap-highlight-color: transparent;  /* removes iOS grey tap flash */
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-  transition: background 0.15s, border-color 0.15s;
-  font-family: inherit;
-}
-.reaction-btn-lg           { font-size: 20px; padding: 5px 11px; gap: 5px; }
-.reacted[data-emoji="❤️"] .rx-fill { fill: #e0245e; }
-.reacted[data-emoji="😍"] .rx-fill { fill: #ffcc4d; }
-.reacted[data-emoji="😂"] .rx-fill { fill: #ffcc4d; }
-.reacted[data-emoji="🥂"] .rx-fill { fill: #f4c01e; }
-.reacted[data-emoji="😮"] .rx-fill { fill: #ffcc4d; }
-
-.reaction-img {
-  display: inline-flex;
-  flex-shrink: 0;
-  pointer-events: none;
-  transition: transform 0.15s ease;
-}
-.reaction-img svg {
-  width: 28px;
-  height: 28px;
-  display: block;
-}
-@media (hover: hover) {
-  .reaction-btn:hover .reaction-img { transform: scale(1.35); }
-}
-.reaction-btn-lg .reaction-img svg { width: 28px; height: 28px; }
-
-.reaction-count {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 11px;
-  color: var(--mid);
-  line-height: 1;
-}
-.reaction-btn-lg .reaction-count  { font-size: 14px; color: rgba(255,255,255,0.8); }
-
-/* Lightbox reactions row */
-#lightbox-reactions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0 24px;
-  min-height: 36px;
-}
-/*#lightbox-reactions .reaction-btn-lg:hover  { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); }
-#lightbox-reactions .reaction-btn-lg.reacted { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }*/

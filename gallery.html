@@ -56,7 +56,9 @@
       />
       <span class="upload-status" id="upload-status"></span>
     </div>
-   
+    <div id="new-photos-banner" class="new-photos-banner" style="display:none;" onclick="applyPendingPhotos()">
+      <span id="new-photos-label">New photos added — tap to see</span>
+    </div>
     <div class="gallery-grid" id="gallery-grid">
       <p class="gallery-placeholder">Loading photos…</p>
     </div>
@@ -167,8 +169,6 @@
     { emoji: '🥂',  label: 'Cheers'     },
     { emoji: '😮',  label: 'Wow'        },
   ];
-
-  const reactingLocks = new Set();
  
   // allPhotos: [{key, caption, author, reactions}] sorted newest-first
   let allPhotos = [];
@@ -184,6 +184,7 @@
  
   let sessionGuestTag = '';
   let uploadInProgress = false;
+  let pendingPhotos    = null;
   function getOrGenerateGuest() {
     if (!sessionGuestTag) sessionGuestTag = 'Guest ' + Math.floor(1000 + Math.random() * 9000);
     return sessionGuestTag;
@@ -252,71 +253,45 @@
       renderLightboxReactions(reactions, key);
     }
   }
-
+ 
   function renderLightboxReactions(reactions, key) {
     const el = document.getElementById('lightbox-reactions');
-    if (!el) return;
-    const existing = el.querySelectorAll('.reaction-btn');
-    if (existing.length && el.dataset.key === key) {
-      // Update in-place — preserves hover/focus state
-      existing.forEach(btn => {
-        const emoji   = btn.dataset.emoji;
-        const count   = (reactions || {})[emoji] || 0;
-        const reacted = hasReacted(key, emoji);
-        btn.classList.toggle('reacted', reacted);
-        let countEl = btn.querySelector('.reaction-count');
-        if (count) {
-          if (!countEl) {
-            countEl = document.createElement('span');
-            countEl.className = 'reaction-count';
-            btn.appendChild(countEl);
-          }
-          countEl.textContent = count;
-        } else if (countEl) {
-          countEl.remove();
-        }
-      });
-    } else {
-      // New photo — full render
-      el.dataset.key = key;
-      el.innerHTML = reactionBarHtml(key, reactions, true);
-    }
+    if (el) el.innerHTML = reactionBarHtml(key, reactions, true);
   }
  
   async function reactToPhoto(key, emoji, event) {
     event.stopPropagation();
-    const lockKey = `${key}::${emoji}`;
-    if (reactingLocks.has(lockKey)) return;
-    reactingLocks.add(lockKey);
+ 
+    const photo = allPhotos.find(p => p.key === key);
+    if (!photo) return;
+ 
+    const alreadyReacted = hasReacted(key, emoji);
+    const action = alreadyReacted ? 'remove' : 'add';
+ 
+    // Optimistic update
+    photo.reactions = photo.reactions || {};
+    if (alreadyReacted) {
+      photo.reactions[emoji] = Math.max(0, (photo.reactions[emoji] || 1) - 1);
+      removeMyReaction(key, emoji);
+    } else {
+      photo.reactions[emoji] = (photo.reactions[emoji] || 0) + 1;
+      saveMyReaction(key, emoji);
+    }
+    updateReactionBar(key, photo.reactions);
+ 
+    // Persist to backend
     try {
-      const photo = allPhotos.find(p => p.key === key);
-      if (!photo) return;
-      const alreadyReacted = hasReacted(key, emoji);
-      const action = alreadyReacted ? 'remove' : 'add';
-      photo.reactions = photo.reactions || {};
-      if (alreadyReacted) {
-        photo.reactions[emoji] = Math.max(0, (photo.reactions[emoji] || 1) - 1);
-        removeMyReaction(key, emoji);
-      } else {
-        photo.reactions[emoji] = (photo.reactions[emoji] || 0) + 1;
-        saveMyReaction(key, emoji);
+      const res = await fetch(
+        `${REACT_API}?key=${encodeURIComponent(key)}&emoji=${encodeURIComponent(emoji)}&action=${action}`,
+        { method: 'POST' }
+      );
+      if (res.ok) {
+        const updated = await res.json();
+        photo.reactions = updated;
+        updateReactionBar(key, updated);
       }
-      updateReactionBar(key, photo.reactions);
-      try {
-        const res = await fetch(
-          `${REACT_API}?key=${encodeURIComponent(key)}&emoji=${encodeURIComponent(emoji)}&action=${action}`,
-          { method: 'POST' }
-        );
-        if (res.ok) {
-          const updated = await res.json();
-          photo.reactions = updated;
-          updateReactionBar(key, updated);
-        }
-      } catch (err) {
-        console.warn('React failed — keeping optimistic update:', err);
-      }
-    } finally {
-      reactingLocks.delete(lockKey);
+    } catch (err) {
+      console.warn('React failed — keeping optimistic update:', err);
     }
   }
  
@@ -374,12 +349,35 @@
     }
   }
  
+  function showNewPhotosBanner(count) {
+    const banner = document.getElementById('new-photos-banner');
+    const label  = document.getElementById('new-photos-label');
+    if (!banner) return;
+    label.textContent = `${count} new photo${count === 1 ? '' : 's'} added — tap to see`;
+    banner.style.display = 'flex';
+  }
+ 
+  function hideNewPhotosBanner() {
+    const banner = document.getElementById('new-photos-banner');
+    if (banner) banner.style.display = 'none';
+  }
+ 
+  function applyPendingPhotos() {
+    if (!pendingPhotos) return;
+    allPhotos = pendingPhotos;
+    pendingPhotos = null;
+    displayCount = 6;
+    hideNewPhotosBanner();
+    renderGrid();
+    document.getElementById('gallery-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+ 
   async function silentRefresh() {
     if (uploadInProgress) return;
     try {
       const fresh = await fetchPhotos();
  
-      // Update reaction bars in place for existing photos (no full re-render)
+      // Always update reaction counts in-place
       fresh.forEach(freshPhoto => {
         const existing = allPhotos.find(p => p.key === freshPhoto.key);
         if (existing && JSON.stringify(existing.reactions) !== JSON.stringify(freshPhoto.reactions)) {
@@ -388,10 +386,11 @@
         }
       });
  
-      // Full re-render only if new photos have appeared
-      if (fresh.length !== allPhotos.length || (fresh.length && fresh[0].key !== allPhotos[0].key)) {
-        allPhotos = fresh;
-        renderGrid();
+      // New photos detected — show banner instead of re-rendering
+      const newCount = fresh.length - allPhotos.length;
+      if (newCount > 0 || (fresh.length && fresh[0].key !== allPhotos[0]?.key)) {
+        pendingPhotos = fresh;
+        showNewPhotosBanner(Math.max(newCount, 1));
       } else {
         allPhotos = fresh;
       }
@@ -399,67 +398,49 @@
   }
  
   // ── RENDERING ──
-
-  function cardHtml(photo, index) {
-    const hasCaption = !!photo.caption;
-    const hasAuthor  = !!photo.author;
-    const metaHtml = (hasCaption || hasAuthor)
-      ? `<div class="gallery-item-caption">
-           <p class="caption-line">${
-             hasAuthor ? `<strong class="caption-author">${escHtml(photo.author)}</strong> ` : ''
-           }${hasCaption ? escHtml(photo.caption) : ''}</p>
-         </div>`
-      : '';
-    return `<div class="gallery-item" onclick="openLightbox(${index})">
-      <div class="gallery-item-img">
-        <img src="${S3_BASE}/${photo.key}" loading="lazy" alt="Wedding photo" />
-      </div>
-      <div class="reaction-bar" data-key="${escHtml(photo.key)}">${reactionBarHtml(photo.key, photo.reactions)}</div>
-      ${metaHtml}
-    </div>`;
-  }
  
   function renderGrid() {
     const grid = document.getElementById('gallery-grid');
     const visible = allPhotos.slice(0, displayCount);
+ 
     if (visible.length === 0) {
       grid.innerHTML = '<p class="gallery-placeholder">No photos yet — be the first to share one!</p>';
       return;
     }
+ 
+    const items = visible.map((photo, i) => {
+      const hasCaption = !!photo.caption;
+      const hasAuthor  = !!photo.author;
+      const metaHtml = (hasCaption || hasAuthor)
+        ? `<div class="gallery-item-caption">
+             <p class="caption-line">${
+               hasAuthor ? `<strong class="caption-author">${escHtml(photo.author)}</strong> ` : ''
+             }${
+               hasCaption ? escHtml(photo.caption) : ''
+             }</p>
+           </div>`
+        : '';
+      return `<div class="gallery-item" onclick="openLightbox(${i})">
+        <div class="gallery-item-img">
+          <img src="${S3_BASE}/${photo.key}" loading="lazy" alt="Wedding photo" />
+        </div>
+        <div class="reaction-bar" data-key="${escHtml(photo.key)}">${reactionBarHtml(photo.key, photo.reactions)}</div>
+        ${metaHtml}
+      </div>`;
+    }).join('');
+ 
     const seeMore = allPhotos.length > displayCount
-      ? `<div class="see-more-row"><button class="see-more-btn" onclick="showMore()">See more photos</button></div>`
+      ? `<div class="see-more-row">
+           <button class="see-more-btn" onclick="showMore()">See more photos</button>
+         </div>`
       : '';
-    grid.innerHTML = visible.map((photo, i) => cardHtml(photo, i)).join('') + seeMore;
-    requestAnimationFrame(() => requestAnimationFrame(addCaptionToggles));
-  }
-
-  function showMore() {
-    const prevCount = displayCount;
-    displayCount += 6;
-    const grid = document.getElementById('gallery-grid');
-    // Remove old "see more" button
-    const oldBtn = grid.querySelector('.see-more-row');
-    if (oldBtn) oldBtn.remove();
-    // Append only new cards
-    const frag = document.createDocumentFragment();
-    allPhotos.slice(prevCount, displayCount).forEach((photo, i) => {
-      const div = document.createElement('div');
-      div.innerHTML = cardHtml(photo, prevCount + i);
-      frag.appendChild(div.firstElementChild);
-    });
-    grid.appendChild(frag);
-    // Add new "see more" if still more
-    if (allPhotos.length > displayCount) {
-      const row = document.createElement('div');
-      row.innerHTML = `<div class="see-more-row"><button class="see-more-btn" onclick="showMore()">See more photos</button></div>`;
-      grid.appendChild(row.firstElementChild);
-    }
+ 
+    grid.innerHTML = items + seeMore;
     requestAnimationFrame(() => requestAnimationFrame(addCaptionToggles));
   }
  
   function addCaptionToggles() {
     document.querySelectorAll('.caption-line').forEach(el => {
-      if (el.parentNode.querySelector('.caption-more-btn')) return;
       if (el.scrollHeight > el.clientHeight + 1) {
         const btn = document.createElement('button');
         btn.className = 'caption-more-btn';
@@ -474,6 +455,11 @@
         el.parentNode.appendChild(btn);
       }
     });
+  }
+ 
+  function showMore() {
+    displayCount += 6;
+    renderGrid();
   }
  
   function escHtml(str) {
@@ -527,13 +513,11 @@
   function cancelUpload() {
     pendingFiles = [];
     pendingIndex = 0;
-    uploadInProgress = false;
     document.getElementById('caption-modal').classList.remove('open');
     document.getElementById('upload-status').textContent = '';
   }
  
   async function submitUpload() {
-    uploadInProgress = true;
     const file    = pendingFiles[pendingIndex];
     const caption = document.getElementById('caption-input').value.trim();
  
@@ -553,7 +537,6 @@
     if (ext === 'heic' || ext === 'heif') {
       status.textContent = 'HEIC not supported — please save as JPEG first.';
       document.getElementById('caption-modal').classList.remove('open');
-      uploadInProgress = false;
       return;
     }
  
@@ -577,7 +560,6 @@
       status.textContent = `Could not upload ${file.name} — please try again.`;
       document.getElementById('caption-modal').classList.remove('open');
       btn.disabled = false;
-      uploadInProgress = false;
       return;
     }
  
@@ -589,7 +571,6 @@
     } else {
       pendingFiles = [];
       pendingIndex = 0;
-      uploadInProgress = false;
       status.textContent = 'Photos shared! 🎉';
       setTimeout(() => { status.textContent = ''; loadGallery(); }, 2000);
     }
@@ -618,7 +599,6 @@
   }
  
   function shiftLightbox(dir) {
-    if (!allPhotos.length) return;
     lightboxIndex = (lightboxIndex + dir + allPhotos.length) % allPhotos.length;
     const photo = allPhotos[lightboxIndex];
     document.getElementById('lightbox-img').src = `${S3_BASE}/${photo.key}`;
