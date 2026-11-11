@@ -572,7 +572,11 @@
       pendingFiles = [];
       pendingIndex = 0;
       status.textContent = 'Photos shared! 🎉';
-      setTimeout(() => { status.textContent = ''; loadGallery(); }, 2000);
+      setTimeout(async () => {
+        status.textContent = '';
+        await loadGallery();
+        uploadInProgress = false;
+      }, 2000);
     }
   }
  
