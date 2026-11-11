@@ -8,6 +8,7 @@
   <title>Gallery — Holly &amp; Ashley</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BXC2VQV9V0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.min.js"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -373,7 +374,7 @@
   }
  
   async function silentRefresh() {
-    if (uploadInProgress) return;
+    if (uploadInProgress || pendingFiles.length) return;
     try {
       const fresh = await fetchPhotos();
  
@@ -529,23 +530,40 @@
     const status = document.getElementById('upload-status');
  
     btn.disabled = true;
-    btn.textContent = 'Uploading…';
- 
+
     const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
     const mime = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', gif:'image/gif' }[ext] || file.type || 'image/jpeg';
- 
+
     if (ext === 'heic' || ext === 'heif') {
       status.textContent = 'HEIC not supported — please save as JPEG first.';
       document.getElementById('caption-modal').classList.remove('open');
+      uploadInProgress = false;
       return;
     }
- 
+
+    // Compress before upload (skip GIFs — compression breaks animation)
+    let fileToUpload = file;
+    if (ext !== 'gif') {
+      btn.textContent = 'Uploading…';
+      try {
+        fileToUpload = await imageCompression(file, {
+          maxSizeMB: 3,
+          maxWidthOrHeight: 2048,
+          useWebWorker: true,
+          initialQuality: 0.8,
+        });
+        console.log(`Compressed: ${(file.size/1024/1024).toFixed(1)}MB → ${(fileToUpload.size/1024/1024).toFixed(1)}MB`);
+      } catch (e) {
+        console.warn('Compression failed, uploading original:', e);
+        fileToUpload = file;
+      }
+    }
     try {
       const presignRes = await fetch(`${PRESIGN_API}?ext=${ext}`);
       if (!presignRes.ok) throw new Error(`Presign failed: ${presignRes.status}`);
       const { url, captionUrl } = await presignRes.json();
- 
-      const s3Res = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': mime } });
+
+      const s3Res = await fetch(url, { method: 'PUT', body: fileToUpload, headers: { 'Content-Type': mime } });
       if (!s3Res.ok) throw new Error(`S3 upload failed: ${s3Res.status}`);
  
       if (captionUrl) {
