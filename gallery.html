@@ -413,11 +413,14 @@
       const genuinelyNew = fresh.filter(p =>
         !allPhotos.find(e => e.key === p.key) && !myUploadedKeys.has(p.key)
       );
+      const hadRemovals = allPhotos.some(p => !fresh.find(f => f.key === p.key));
+ 
       if (genuinelyNew.length > 0) {
         pendingPhotos = fresh;
         showNewPhotosBanner(genuinelyNew.length);
       } else {
         allPhotos = fresh;
+        if (hadRemovals) renderGrid();
       }
     } catch (_) {}
   }
